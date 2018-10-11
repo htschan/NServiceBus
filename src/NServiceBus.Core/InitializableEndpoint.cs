@@ -244,7 +244,7 @@ namespace NServiceBus
             builder = b;
             container = b;
 
-            container.ConfigureComponent<IBuilder>(_ => b, DependencyLifecycle.SingleInstance);
+            container.ConfigureComponent<IServiceProvider>(_ => b, DependencyLifecycle.SingleInstance);
         }
 
         async Task RunInstallers(IEnumerable<Type> concreteTypes, string username)
@@ -279,7 +279,7 @@ namespace NServiceBus
             return userName;
         }
 
-        IBuilder builder;
+        IServiceProvider builder;
         IConfigureComponents container;
         PipelineConfiguration pipelineConfiguration;
         PipelineSettings pipelineSettings;

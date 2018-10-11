@@ -5,16 +5,14 @@ namespace NServiceBus
     using System.Threading.Tasks;
     using Features;
     using Logging;
-    using ObjectBuilder;
     using Settings;
     using Transport;
 
     class RunningEndpointInstance : IEndpointInstance
     {
-        public RunningEndpointInstance(SettingsHolder settings, IBuilder builder, ReceiveComponent receiveComponent, FeatureRunner featureRunner, IMessageSession messageSession, TransportInfrastructure transportInfrastructure)
+        public RunningEndpointInstance(SettingsHolder settings, ReceiveComponent receiveComponent, FeatureRunner featureRunner, IMessageSession messageSession, TransportInfrastructure transportInfrastructure)
         {
             this.settings = settings;
-            this.builder = builder;
             this.receiveComponent = receiveComponent;
             this.featureRunner = featureRunner;
             this.messageSession = messageSession;
@@ -52,12 +50,13 @@ namespace NServiceBus
             finally
             {
                 settings.Clear();
-                builder.Dispose();
+                //builder.Dispose();
 
                 stopped = true;
                 Log.Info("Shutdown complete.");
 
                 stopSemaphore.Release();
+
             }
         }
 
@@ -91,7 +90,6 @@ namespace NServiceBus
             return messageSession.Unsubscribe(eventType, options);
         }
 
-        IBuilder builder;
         ReceiveComponent receiveComponent;
         FeatureRunner featureRunner;
         IMessageSession messageSession;

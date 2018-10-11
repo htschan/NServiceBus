@@ -2,7 +2,6 @@ namespace NServiceBus.Pipeline
 {
     using System;
     using Configuration.AdvancedExtensibility;
-    using ObjectBuilder;
     using Settings;
 
     /// <summary>
@@ -65,7 +64,7 @@ namespace NServiceBus.Pipeline
         /// <param name="stepId">The identifier of the step to replace its implementation.</param>
         /// <param name="factoryMethod">The factory method to create new instances of the behavior.</param>
         /// <param name="description">The description of the new behavior.</param>
-        public void Replace<T>(string stepId, Func<IBuilder, T> factoryMethod, string description = null)
+        public void Replace<T>(string stepId, Func<IServiceProvider, T> factoryMethod, string description = null)
             where T : IBehavior
         {
             BehaviorTypeChecker.ThrowIfInvalid(typeof(T), "newBehavior");
@@ -107,7 +106,7 @@ namespace NServiceBus.Pipeline
         /// </summary>
         /// <param name="factoryMethod">A callback that creates the behavior instance.</param>
         /// <param name="description">The description of the behavior.</param>
-        public void Register<T>(Func<IBuilder, T> factoryMethod, string description)
+        public void Register<T>(Func<IServiceProvider, T> factoryMethod, string description)
             where T : IBehavior
         {
             BehaviorTypeChecker.ThrowIfInvalid(typeof(T), "behavior");
@@ -121,7 +120,7 @@ namespace NServiceBus.Pipeline
         /// <param name="stepId">The identifier of the new step to add.</param>
         /// <param name="factoryMethod">A callback that creates the behavior instance.</param>
         /// <param name="description">The description of the behavior.</param>
-        public void Register<T>(string stepId, Func<IBuilder, T> factoryMethod, string description)
+        public void Register<T>(string stepId, Func<IServiceProvider, T> factoryMethod, string description)
             where T : IBehavior
         {
             BehaviorTypeChecker.ThrowIfInvalid(typeof(T), "behavior");

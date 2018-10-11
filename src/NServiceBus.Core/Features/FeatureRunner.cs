@@ -1,7 +1,7 @@
 namespace NServiceBus.Features
 {
+    using System;
     using System.Threading.Tasks;
-    using ObjectBuilder;
 
     class FeatureRunner
     {
@@ -10,7 +10,7 @@ namespace NServiceBus.Features
             this.featureActivator = featureActivator;
         }
 
-        public Task Start(IBuilder builder, IMessageSession messageSession)
+        public Task Start(IServiceProvider builder, IMessageSession messageSession)
         {
             return featureActivator.StartFeatures(builder, messageSession);
         }

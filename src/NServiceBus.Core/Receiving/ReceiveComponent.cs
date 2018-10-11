@@ -5,7 +5,6 @@ namespace NServiceBus
     using System.Linq;
     using System.Threading.Tasks;
     using Logging;
-    using ObjectBuilder;
     using Transport;
 
     class ReceiveComponent
@@ -14,7 +13,7 @@ namespace NServiceBus
             TransportReceiveInfrastructure receiveInfrastructure,
             IPipelineExecutor mainPipelineExecutor,
             IEventAggregator eventAggregator,
-            IBuilder builder,
+            IServiceProvider builder,
             CriticalError criticalError,
             string errorQueue)
         {
@@ -171,7 +170,7 @@ namespace NServiceBus
         TransportReceiveInfrastructure receiveInfrastructure;
         IPipelineExecutor mainPipelineExecutor;
         IEventAggregator eventAggregator;
-        IBuilder builder;
+        IServiceProvider builder;
         CriticalError criticalError;
         string errorQueue;
 

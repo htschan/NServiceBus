@@ -64,7 +64,7 @@ namespace NServiceBus.Features
             return features.Select(t => t.Diagnostics).ToArray();
         }
 
-        public async Task StartFeatures(IBuilder builder, IMessageSession session)
+        public async Task StartFeatures(IServiceProvider builder, IMessageSession session)
         {
             foreach (var feature in features.Where(f => f.Feature.IsActive))
             {

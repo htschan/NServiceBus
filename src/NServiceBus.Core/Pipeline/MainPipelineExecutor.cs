@@ -2,13 +2,13 @@ namespace NServiceBus
 {
     using System;
     using System.Threading.Tasks;
-    using ObjectBuilder;
+    using Microsoft.Extensions.DependencyInjection;
     using Pipeline;
     using Transport;
 
     class MainPipelineExecutor : IPipelineExecutor
     {
-        public MainPipelineExecutor(IBuilder builder, IEventAggregator eventAggregator, IPipelineCache pipelineCache, IPipeline<ITransportReceiveContext> mainPipeline)
+        public MainPipelineExecutor(IServiceProvider builder, IEventAggregator eventAggregator, IPipelineCache pipelineCache, IPipeline<ITransportReceiveContext> mainPipeline)
         {
             this.mainPipeline = mainPipeline;
             this.pipelineCache = pipelineCache;
@@ -20,9 +20,9 @@ namespace NServiceBus
         {
             var pipelineStartedAt = DateTime.UtcNow;
 
-            using (var childBuilder = builder.CreateChildBuilder())
+            using (var serviceScope = builder.CreateScope())
             {
-                var rootContext = new RootContext(childBuilder, pipelineCache, eventAggregator);
+                var rootContext = new RootContext(serviceScope.ServiceProvider, pipelineCache, eventAggregator);
 
                 var message = new IncomingMessage(messageContext.MessageId, messageContext.Headers, messageContext.Body);
                 var context = new TransportReceiveContext(message, messageContext.TransportTransaction, messageContext.ReceiveCancellationTokenSource, rootContext);
@@ -36,7 +36,7 @@ namespace NServiceBus
         }
 
         IEventAggregator eventAggregator;
-        IBuilder builder;
+        IServiceProvider builder;
         IPipelineCache pipelineCache;
         IPipeline<ITransportReceiveContext> mainPipeline;
     }

@@ -3,13 +3,12 @@ namespace NServiceBus
     using System;
     using System.Collections.Generic;
     using System.Threading;
-    using ObjectBuilder;
     using Pipeline;
     using Settings;
 
     class PipelineCache : IPipelineCache
     {
-        public PipelineCache(IBuilder builder, ReadOnlySettings settings)
+        public PipelineCache(IServiceProvider builder, ReadOnlySettings settings)
         {
             FromMainPipeline<IAuditContext>(builder, settings);
             FromMainPipeline<IDispatchContext>(builder, settings);
@@ -33,7 +32,7 @@ namespace NServiceBus
             throw new InvalidOperationException("Custom pipelines are not supported.");
         }
 
-        void FromMainPipeline<TContext>(IBuilder builder, ReadOnlySettings settings)
+        void FromMainPipeline<TContext>(IServiceProvider builder, ReadOnlySettings settings)
             where TContext : IBehaviorContext
         {
             var lazyPipeline = new Lazy<IPipeline>(() =>

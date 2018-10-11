@@ -6,52 +6,11 @@ namespace NServiceBus
     using ObjectBuilder;
     using ObjectBuilder.Common;
 
-    class CommonObjectBuilder : IBuilder, IConfigureComponents
+    class CommonObjectBuilder : IServiceProvider, IConfigureComponents
     {
         public CommonObjectBuilder(IContainer container)
         {
             this.container = container;
-        }
-
-        public IBuilder CreateChildBuilder()
-        {
-            return new CommonObjectBuilder(container.BuildChildContainer());
-        }
-
-        public void Dispose()
-        {
-            //Injected at compile time
-        }
-
-        public T Build<T>()
-        {
-            return (T) container.Build(typeof(T));
-        }
-
-        public object Build(Type typeToBuild)
-        {
-            return container.Build(typeToBuild);
-        }
-
-        IEnumerable<object> IBuilder.BuildAll(Type typeToBuild)
-        {
-            return container.BuildAll(typeToBuild);
-        }
-
-        void IBuilder.Release(object instance)
-        {
-            container.Release(instance);
-        }
-
-        public IEnumerable<T> BuildAll<T>()
-        {
-            return container.BuildAll(typeof(T)).Cast<T>();
-        }
-
-        public void BuildAndDispatch(Type typeToBuild, Action<object> action)
-        {
-            var o = container.Build(typeToBuild);
-            action(o);
         }
 
         public void ConfigureComponent(Type concreteComponent, DependencyLifecycle instanceLifecycle)
@@ -69,7 +28,7 @@ namespace NServiceBus
             container.Configure(componentFactory, instanceLifecycle);
         }
 
-        public void ConfigureComponent<T>(Func<IBuilder, T> componentFactory, DependencyLifecycle instanceLifecycle)
+        public void ConfigureComponent<T>(Func<IServiceProvider, T> componentFactory, DependencyLifecycle instanceLifecycle)
         {
             container.Configure(() => componentFactory(this), instanceLifecycle);
         }
@@ -94,11 +53,57 @@ namespace NServiceBus
             return container.HasComponent(componentType);
         }
 
+        public object GetService(Type serviceType)
+        {
+            return container.Build(serviceType);
+        }
+
+        public IServiceProvider CreateChildBuilder()
+        {
+            return new CommonObjectBuilder(container.BuildChildContainer());
+        }
+
+        public void Dispose()
+        {
+            //Injected at compile time
+        }
+
+        public T Build<T>()
+        {
+            return (T)container.Build(typeof(T));
+        }
+
+        public object Build(Type typeToBuild)
+        {
+            return container.Build(typeToBuild);
+        }
+
+        public IEnumerable<object> BuildAll(Type typeToBuild)
+        {
+            return container.BuildAll(typeToBuild);
+        }
+
+        public void Release(object instance)
+        {
+            container.Release(instance);
+        }
+
+        public IEnumerable<T> BuildAll<T>()
+        {
+            return container.BuildAll(typeof(T)).Cast<T>();
+        }
+
+        public void BuildAndDispatch(Type typeToBuild, Action<object> action)
+        {
+            var o = container.Build(typeToBuild);
+            action(o);
+        }
+
         void DisposeManaged()
         {
             container?.Dispose();
         }
 
-        IContainer container;
+        readonly IContainer container;
     }
 }

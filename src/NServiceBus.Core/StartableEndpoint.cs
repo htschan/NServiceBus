@@ -4,13 +4,12 @@ namespace NServiceBus
     using System.Security.Principal;
     using System.Threading.Tasks;
     using Features;
-    using ObjectBuilder;
     using Settings;
     using Transport;
 
     class StartableEndpoint : IStartableEndpoint
     {
-        public StartableEndpoint(SettingsHolder settings, IBuilder builder, FeatureActivator featureActivator, TransportInfrastructure transportInfrastructure, ReceiveComponent receiveComponent, CriticalError criticalError, IMessageSession messageSession)
+        public StartableEndpoint(SettingsHolder settings, IServiceProvider builder, FeatureActivator featureActivator, TransportInfrastructure transportInfrastructure, ReceiveComponent receiveComponent, CriticalError criticalError, IMessageSession messageSession)
         {
             this.criticalError = criticalError;
             this.settings = settings;
@@ -33,7 +32,7 @@ namespace NServiceBus
 
             var featureRunner = await StartFeatures().ConfigureAwait(false);
 
-            var runningInstance = new RunningEndpointInstance(settings, builder, receiveComponent, featureRunner, messageSession, transportInfrastructure);
+            var runningInstance = new RunningEndpointInstance(settings, receiveComponent, featureRunner, messageSession, transportInfrastructure);
 
             // set the started endpoint on CriticalError to pass the endpoint to the critical error action
             criticalError.SetEndpoint(runningInstance);
@@ -51,7 +50,7 @@ namespace NServiceBus
         }
 
         IMessageSession messageSession;
-        IBuilder builder;
+        IServiceProvider builder;
         FeatureActivator featureActivator;
         SettingsHolder settings;
         TransportInfrastructure transportInfrastructure;
