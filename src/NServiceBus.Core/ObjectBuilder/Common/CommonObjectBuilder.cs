@@ -57,47 +57,19 @@ namespace NServiceBus
         {
             return container.Build(serviceType);
         }
-
-        public IServiceProvider CreateChildBuilder()
-        {
-            return new CommonObjectBuilder(container.BuildChildContainer());
-        }
+        
 
         public void Dispose()
         {
             //Injected at compile time
         }
-
-        public T Build<T>()
-        {
-            return (T)container.Build(typeof(T));
-        }
-
-        public object Build(Type typeToBuild)
-        {
-            return container.Build(typeToBuild);
-        }
-
-        public IEnumerable<object> BuildAll(Type typeToBuild)
-        {
-            return container.BuildAll(typeToBuild);
-        }
-
-        public void Release(object instance)
-        {
-            container.Release(instance);
-        }
+        
 
         public IEnumerable<T> BuildAll<T>()
         {
             return container.BuildAll(typeof(T)).Cast<T>();
         }
 
-        public void BuildAndDispatch(Type typeToBuild, Action<object> action)
-        {
-            var o = container.Build(typeToBuild);
-            action(o);
-        }
 
         void DisposeManaged()
         {

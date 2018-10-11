@@ -2,6 +2,7 @@
 {
     using System;
     using System.Collections.Generic;
+    using System.Linq;
     using Microsoft.Extensions.DependencyInjection;
 
     /// <summary>
@@ -39,7 +40,9 @@
         /// <returns></returns>
         public static IEnumerable<T> BuildAll<T>(this IServiceProvider serviceProvider)
         {
-            return (IEnumerable<T>)serviceProvider.GetServices(typeof(T));
+            var result = serviceProvider.GetServices(typeof(T));
+
+            return result.Cast<T>();
         }
     }
 }
