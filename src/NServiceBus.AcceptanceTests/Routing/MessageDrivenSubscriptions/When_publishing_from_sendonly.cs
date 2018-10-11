@@ -7,6 +7,7 @@
     using EndpointTemplates;
     using Extensibility;
     using Features;
+    using Microsoft.Extensions.DependencyInjection;
     using NServiceBus;
     using NUnit.Framework;
     using Persistence;
@@ -85,7 +86,7 @@
         {
             protected override void Setup(FeatureConfigurationContext context)
             {
-                context.Container.ConfigureComponent<HardcodedSubscriptionManager>(DependencyLifecycle.SingleInstance);
+                context.Container.AddSingleton<HardcodedSubscriptionManager>();
             }
         }
 

@@ -1,14 +1,14 @@
 ﻿namespace NServiceBus
 {
-    using ObjectBuilder;
+    using Microsoft.Extensions.DependencyInjection;
 
     class PipelineConfiguration
     {
-        public void RegisterBehaviorsInContainer(IConfigureComponents container)
+        public void RegisterBehaviorsInContainer(IServiceCollection container)
         {
             foreach (var registeredBehavior in Modifications.Replacements)
             {
-                container.ConfigureComponent(registeredBehavior.BehaviorType, DependencyLifecycle.InstancePerCall);
+                container.AddTransient(registeredBehavior.BehaviorType);
             }
 
             foreach (var step in Modifications.Additions)

@@ -6,7 +6,7 @@ namespace NServiceBus
     using System.Threading.Tasks;
     using Features;
     using Installation;
-    using ObjectBuilder;
+    using Microsoft.Extensions.DependencyInjection;
     using ObjectBuilder.Common;
     using Pipeline;
     using Routing;
@@ -18,7 +18,7 @@ namespace NServiceBus
     {
         public InitializableEndpoint(SettingsHolder settings,
             IContainer container,
-            List<Action<IConfigureComponents>> registrations,
+            List<Action<IServiceCollection>> registrations,
             PipelineSettings pipelineSettings,
             PipelineConfiguration pipelineConfiguration)
         {
@@ -29,8 +29,8 @@ namespace NServiceBus
             RegisterContainerAdapter(container);
             RunUserRegistrations(registrations);
 
-            this.container.RegisterSingleton(this);
-            this.container.RegisterSingleton<ReadOnlySettings>(settings);
+            this.container.AddSingleton(this);
+            this.container.AddSingleton<ReadOnlySettings>(settings);
         }
 
         public async Task<IStartableEndpoint> Initialize()
@@ -56,7 +56,7 @@ namespace NServiceBus
 
             pipelineConfiguration.RegisterBehaviorsInContainer(container);
 
-            container.ConfigureComponent(b => settings.Get<Notifications>(), DependencyLifecycle.SingleInstance);
+            container.AddSingleton(_ => settings.Get<Notifications>());
 
             var eventAggregator = new EventAggregator(settings.Get<NotificationSubscriptions>());
             var pipelineCache = new PipelineCache(builder, settings);
@@ -226,10 +226,10 @@ namespace NServiceBus
         {
             settings.TryGet("onCriticalErrorAction", out Func<ICriticalErrorContext, Task> errorAction);
             criticalError = new CriticalError(errorAction);
-            container.RegisterSingleton(criticalError);
+            container.AddSingleton(criticalError);
         }
 
-        void RunUserRegistrations(List<Action<IConfigureComponents>> registrations)
+        void RunUserRegistrations(List<Action<IServiceCollection>> registrations)
         {
             foreach (var registration in registrations)
             {
@@ -244,14 +244,14 @@ namespace NServiceBus
             builder = b;
             container = b;
 
-            container.ConfigureComponent<IServiceProvider>(_ => b, DependencyLifecycle.SingleInstance);
+            container.AddSingleton<IServiceProvider>(_ => b);
         }
 
         async Task RunInstallers(IEnumerable<Type> concreteTypes, string username)
         {
             foreach (var installerType in concreteTypes.Where(t => IsINeedToInstallSomething(t)))
             {
-                container.ConfigureComponent(installerType, DependencyLifecycle.InstancePerCall);
+                container.AddTransient(installerType);
             }
 
             foreach (var installer in builder.BuildAll<INeedToInstallSomething>())
@@ -280,7 +280,7 @@ namespace NServiceBus
         }
 
         IServiceProvider builder;
-        IConfigureComponents container;
+        IServiceCollection container;
         PipelineConfiguration pipelineConfiguration;
         PipelineSettings pipelineSettings;
         SettingsHolder settings;

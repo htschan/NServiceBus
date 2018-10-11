@@ -2,6 +2,7 @@
 {
     using DelayedDelivery;
     using DeliveryConstraints;
+    using Microsoft.Extensions.DependencyInjection;
 
     class DelayedDeliveryFeature : Feature
     {
@@ -31,7 +32,7 @@
                 else
                 {
                     context.Pipeline.Register("RouteDeferredMessageToTimeoutManager", new RouteDeferredMessageToTimeoutManagerBehavior(timeoutManagerAddress), "Reroutes deferred messages to the timeout manager");
-                    context.Container.ConfigureComponent(b => new RequestCancelingOfDeferredMessagesFromTimeoutManager(timeoutManagerAddress), DependencyLifecycle.SingleInstance);
+                    context.Container.AddSingleton(b => new RequestCancelingOfDeferredMessagesFromTimeoutManager(timeoutManagerAddress));
                 }
             }
             else
@@ -42,7 +43,7 @@
 
         static void DoNotClearTimeouts(FeatureConfigurationContext context)
         {
-            context.Container.ConfigureComponent(b => new NoOpCanceling(), DependencyLifecycle.SingleInstance);
+            context.Container.AddSingleton(b => new NoOpCanceling());
         }
     }
 }

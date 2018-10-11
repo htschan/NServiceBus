@@ -3,6 +3,7 @@
     using System.Threading.Tasks;
     using Extensibility;
     using Janitor;
+    using Microsoft.Extensions.DependencyInjection;
     using NServiceBus.Outbox;
     using Persistence;
     using Transport;
@@ -24,20 +25,20 @@
 
             context.Pipeline.Register("InvokeHandlers", new InvokeHandlerTerminator(), "Calls the IHandleMessages<T>.Handle(T)");
 
-            context.Container.ConfigureComponent(b =>
+            context.Container.AddTransient(b =>
             {
                 var storage = context.Container.HasComponent<IOutboxStorage>() ? b.Build<IOutboxStorage>() : new NoOpOutbox();
 
                 return new TransportReceiveToPhysicalMessageProcessingConnector(storage);
-            }, DependencyLifecycle.InstancePerCall);
+            });
 
-            context.Container.ConfigureComponent(b =>
+            context.Container.AddTransient(b =>
             {
                 var adapter = context.Container.HasComponent<ISynchronizedStorageAdapter>() ? b.Build<ISynchronizedStorageAdapter>() : new NoOpAdapter();
                 var syncStorage = context.Container.HasComponent<ISynchronizedStorage>() ? b.Build<ISynchronizedStorage>() : new NoOpSynchronizedStorage();
 
                 return new LoadHandlersConnector(b.Build<MessageHandlerRegistry>(), syncStorage, adapter);
-            }, DependencyLifecycle.InstancePerCall);
+            });
         }
 
         class NoOpSynchronizedStorage : ISynchronizedStorage

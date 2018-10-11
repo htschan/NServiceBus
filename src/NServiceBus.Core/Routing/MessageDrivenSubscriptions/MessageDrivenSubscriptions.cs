@@ -1,6 +1,7 @@
 namespace NServiceBus.Features
 {
     using System;
+    using Microsoft.Extensions.DependencyInjection;
     using Transport;
     using Unicast.Messages;
     using Unicast.Subscriptions.MessageDrivenSubscriptions;
@@ -62,7 +63,7 @@ namespace NServiceBus.Features
                 {
                     authorizer = _ => true;
                 }
-                context.Container.RegisterSingleton(authorizer);
+                context.Container.AddSingleton(authorizer);
                 context.Pipeline.Register<SubscriptionReceiverBehavior.Registration>();
             }
         }

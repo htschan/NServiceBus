@@ -3,8 +3,8 @@
     using System;
     using System.Collections.Generic;
     using System.Linq;
+    using Microsoft.Extensions.DependencyInjection;
     using NServiceBus.Sagas;
-    using ObjectBuilder;
     using Transport;
 
     /// <summary>
@@ -53,7 +53,7 @@
             {
                 if (IsSagaNotFoundHandler(t))
                 {
-                    context.Container.ConfigureComponent(t, DependencyLifecycle.InstancePerCall);
+                    context.Container.AddTransient(t);
                 }
             }
 
@@ -63,15 +63,15 @@
             context.Pipeline.Register("AttachSagaDetailsToOutGoingMessage", new AttachSagaDetailsToOutGoingMessageBehavior(), "Makes sure that outgoing messages have saga info attached to them");
         }
 
-        static void RegisterCustomFindersInContainer(IConfigureComponents container, IEnumerable<SagaMetadata> sagaMetaModel)
+        static void RegisterCustomFindersInContainer(IServiceCollection container, IEnumerable<SagaMetadata> sagaMetaModel)
         {
             foreach (var finder in sagaMetaModel.SelectMany(m => m.Finders))
             {
-                container.ConfigureComponent(finder.Type, DependencyLifecycle.InstancePerCall);
+                container.AddTransient(finder.Type);
 
                 if (finder.Properties.TryGetValue("custom-finder-clr-type", out var customFinderType))
                 {
-                    container.ConfigureComponent((Type)customFinderType, DependencyLifecycle.InstancePerCall);
+                    container.AddTransient((Type)customFinderType);
                 }
             }
         }

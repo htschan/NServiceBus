@@ -4,6 +4,7 @@
     using System.Threading.Tasks;
     using AcceptanceTesting;
     using EndpointTemplates;
+    using Microsoft.Extensions.DependencyInjection;
     using NServiceBus.UnitOfWork;
     using NUnit.Framework;
 
@@ -31,7 +32,7 @@
         {
             public UOWEndpoint()
             {
-                EndpointSetup<DefaultServer>(c => c.RegisterComponents(container => container.ConfigureComponent<MyUow>(DependencyLifecycle.InstancePerCall)),
+                EndpointSetup<DefaultServer>(c => c.RegisterComponents(container => container.AddTransient<MyUow>()),
                     metadata => metadata.RegisterPublisherFor<MyMessage>(typeof(UOWEndpoint)));
             }
 

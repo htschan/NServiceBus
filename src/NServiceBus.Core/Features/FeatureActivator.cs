@@ -4,7 +4,7 @@ namespace NServiceBus.Features
     using System.Collections.Generic;
     using System.Linq;
     using System.Threading.Tasks;
-    using ObjectBuilder;
+    using Microsoft.Extensions.DependencyInjection;
     using Pipeline;
     using Settings;
 
@@ -36,7 +36,7 @@ namespace NServiceBus.Features
             }));
         }
 
-        public FeatureDiagnosticData[] SetupFeatures(IConfigureComponents container, PipelineSettings pipelineSettings, RoutingComponent routing, ReceiveConfiguration receiveConfiguration)
+        public FeatureDiagnosticData[] SetupFeatures(IServiceCollection container, PipelineSettings pipelineSettings, RoutingComponent routing, ReceiveConfiguration receiveConfiguration)
         {
             // featuresToActivate is enumerated twice because after setting defaults some new features might got activated.
             var sourceFeatures = Sort(features);
@@ -160,7 +160,7 @@ namespace NServiceBus.Features
             return false;
         }
 
-        bool ActivateFeature(FeatureInfo featureInfo, List<FeatureInfo> featuresToActivate, IConfigureComponents container, PipelineSettings pipelineSettings, RoutingComponent routing, ReceiveConfiguration receiveConfiguration)
+        bool ActivateFeature(FeatureInfo featureInfo, List<FeatureInfo> featuresToActivate, IServiceCollection container, PipelineSettings pipelineSettings, RoutingComponent routing, ReceiveConfiguration receiveConfiguration)
         {
             if (featureInfo.Feature.IsActive)
             {

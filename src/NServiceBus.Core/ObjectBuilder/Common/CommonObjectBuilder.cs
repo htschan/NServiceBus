@@ -1,12 +1,12 @@
 namespace NServiceBus
 {
     using System;
+    using System.Collections;
     using System.Collections.Generic;
-    using System.Linq;
-    using ObjectBuilder;
+    using Microsoft.Extensions.DependencyInjection;
     using ObjectBuilder.Common;
 
-    class CommonObjectBuilder : IServiceProvider, IConfigureComponents
+    class CommonObjectBuilder : IServiceProvider, IServiceCollection
     {
         public CommonObjectBuilder(IContainer container)
         {
@@ -33,7 +33,7 @@ namespace NServiceBus
             container.Configure(() => componentFactory(this), instanceLifecycle);
         }
 
-        void IConfigureComponents.RegisterSingleton(Type lookupType, object instance)
+        public void RegisterSingleton(Type lookupType, object instance)
         {
             container.RegisterSingleton(lookupType, instance);
         }
@@ -63,12 +63,6 @@ namespace NServiceBus
         {
             //Injected at compile time
         }
-        
-
-        public IEnumerable<T> BuildAll<T>()
-        {
-            return container.BuildAll(typeof(T)).Cast<T>();
-        }
 
 
         void DisposeManaged()
@@ -77,5 +71,62 @@ namespace NServiceBus
         }
 
         readonly IContainer container;
+        public IEnumerator<ServiceDescriptor> GetEnumerator()
+        {
+            throw new NotImplementedException();
+        }
+
+        IEnumerator IEnumerable.GetEnumerator()
+        {
+            return GetEnumerator();
+        }
+
+        public void Add(ServiceDescriptor item)
+        {
+            throw new NotImplementedException();
+        }
+
+        public void Clear()
+        {
+            throw new NotImplementedException();
+        }
+
+        public bool Contains(ServiceDescriptor item)
+        {
+            throw new NotImplementedException();
+        }
+
+        public void CopyTo(ServiceDescriptor[] array, int arrayIndex)
+        {
+            throw new NotImplementedException();
+        }
+
+        public bool Remove(ServiceDescriptor item)
+        {
+            throw new NotImplementedException();
+        }
+
+        public int Count { get; }
+        public bool IsReadOnly { get; }
+        public int IndexOf(ServiceDescriptor item)
+        {
+            throw new NotImplementedException();
+        }
+
+        public void Insert(int index, ServiceDescriptor item)
+        {
+            throw new NotImplementedException();
+        }
+
+        public void RemoveAt(int index)
+        {
+            throw new NotImplementedException();
+        }
+
+        public ServiceDescriptor this[int index]
+        {
+            get => throw new NotImplementedException();
+            set => throw new NotImplementedException();
+        }
     }
 }

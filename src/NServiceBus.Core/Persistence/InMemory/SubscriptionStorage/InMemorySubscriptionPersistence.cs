@@ -1,5 +1,7 @@
 ﻿namespace NServiceBus.Features
 {
+    using Microsoft.Extensions.DependencyInjection;
+
     /// <summary>
     /// Used to configure in memory subscription persistence.
     /// </summary>
@@ -15,7 +17,7 @@
         /// </summary>
         protected internal override void Setup(FeatureConfigurationContext context)
         {
-            context.Container.ConfigureComponent<InMemorySubscriptionStorage>(DependencyLifecycle.SingleInstance);
+            context.Container.AddSingleton<InMemorySubscriptionStorage>();
         }
     }
 }

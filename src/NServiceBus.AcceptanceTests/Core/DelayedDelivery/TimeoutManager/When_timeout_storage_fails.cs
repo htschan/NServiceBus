@@ -6,6 +6,7 @@
     using EndpointTemplates;
     using Extensibility;
     using Features;
+    using Microsoft.Extensions.DependencyInjection;
     using NServiceBus;
     using NServiceBus.Persistence;
     using NServiceBus.Timeout.Core;
@@ -54,7 +55,7 @@
                     config.EnableFeature<TimeoutManager>();
                     config.UsePersistence<FakeTimeoutPersistence>();
                     config.SendFailedMessagesTo(ErrorQueueForTimeoutErrors);
-                    config.RegisterComponents(c => c.ConfigureComponent<FakeTimeoutStorage>(DependencyLifecycle.SingleInstance));
+                    config.RegisterComponents(c => c.AddSingleton<FakeTimeoutStorage>());
                 });
             }
 

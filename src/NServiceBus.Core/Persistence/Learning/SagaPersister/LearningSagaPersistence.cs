@@ -2,6 +2,7 @@
 {
     using System;
     using System.IO;
+    using Microsoft.Extensions.DependencyInjection;
     using NServiceBus.Sagas;
 
     class LearningSagaPersistence : Feature
@@ -21,10 +22,10 @@
 
             var sagaManifests = new SagaManifestCollection(allSagas, storageLocation);
 
-            context.Container.ConfigureComponent(b => new LearningSynchronizedStorage(sagaManifests), DependencyLifecycle.SingleInstance);
-            context.Container.ConfigureComponent<LearningStorageAdapter>(DependencyLifecycle.SingleInstance);
+            context.Container.AddSingleton(b => new LearningSynchronizedStorage(sagaManifests));
+            context.Container.AddSingleton<LearningStorageAdapter>();
 
-            context.Container.ConfigureComponent(b => new LearningSagaPersister(), DependencyLifecycle.SingleInstance);
+            context.Container.AddSingleton(b => new LearningSagaPersister());
         }
 
         internal static string StorageLocationKey = "LearningSagaPersistence.StorageLocation";

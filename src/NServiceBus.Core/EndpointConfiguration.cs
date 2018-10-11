@@ -8,7 +8,7 @@ namespace NServiceBus
     using Configuration.AdvancedExtensibility;
     using Container;
     using Hosting.Helpers;
-    using ObjectBuilder;
+    using Microsoft.Extensions.DependencyInjection;
     using ObjectBuilder.Common;
     using Pipeline;
     using Settings;
@@ -63,7 +63,7 @@ namespace NServiceBus
         /// <summary>
         /// Used to configure components in the container.
         /// </summary>
-        public void RegisterComponents(Action<IConfigureComponents> registration)
+        public void RegisterComponents(Action<IServiceCollection> registration)
         {
             Guard.AgainstNull(nameof(registration), registration);
             registrations.Add(registration);
@@ -281,7 +281,7 @@ namespace NServiceBus
         ConventionsBuilder conventionsBuilder;
         IContainer customBuilder;
         PipelineConfiguration pipelineCollection;
-        List<Action<IConfigureComponents>> registrations = new List<Action<IConfigureComponents>>();
+        List<Action<IServiceCollection>> registrations = new List<Action<IServiceCollection>>();
         List<Type> scannedTypes;
     }
 }

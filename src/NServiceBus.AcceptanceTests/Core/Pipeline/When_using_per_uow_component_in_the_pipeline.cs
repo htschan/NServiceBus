@@ -5,6 +5,7 @@
     using System.Threading.Tasks;
     using AcceptanceTesting;
     using EndpointTemplates;
+    using Microsoft.Extensions.DependencyInjection;
     using NServiceBus.Pipeline;
     using NUnit.Framework;
 
@@ -61,7 +62,7 @@
             {
                 EndpointSetup<DefaultServer>(c =>
                 {
-                    c.RegisterComponents(r => r.ConfigureComponent<UnitOfWorkComponent>(DependencyLifecycle.InstancePerUnitOfWork));
+                    c.RegisterComponents(r => r.AddScoped<UnitOfWorkComponent>());
                     c.Pipeline.Register(b => new HeaderProcessingBehavior(b.Build<Context>()), "Populates UoW component.");
                     c.LimitMessageProcessingConcurrencyTo(1);
                 });

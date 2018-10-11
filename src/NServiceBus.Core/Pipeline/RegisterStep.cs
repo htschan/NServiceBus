@@ -3,7 +3,7 @@ namespace NServiceBus.Pipeline
     using System;
     using System.Collections.Generic;
     using System.Diagnostics;
-    using ObjectBuilder;
+    using Microsoft.Extensions.DependencyInjection;
 
     /// <summary>
     /// Base class to do an advance registration of a step.
@@ -48,14 +48,14 @@ namespace NServiceBus.Pipeline
         /// </summary>
         public Type BehaviorType { get; private set; }
 
-        internal void ApplyContainerRegistration(IConfigureComponents container)
+        internal void ApplyContainerRegistration(IServiceCollection container)
         {
             if (factoryMethod != null)
             {
                 return;
             }
 
-            container.ConfigureComponent(BehaviorType, DependencyLifecycle.InstancePerCall);
+            container.AddTransient(BehaviorType);
         }
 
         /// <summary>

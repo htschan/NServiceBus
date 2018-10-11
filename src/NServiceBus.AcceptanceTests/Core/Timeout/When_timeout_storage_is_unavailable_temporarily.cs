@@ -6,6 +6,7 @@
     using Configuration.AdvancedExtensibility;
     using EndpointTemplates;
     using Features;
+    using Microsoft.Extensions.DependencyInjection;
     using NServiceBus.Persistence;
     using NUnit.Framework;
 
@@ -83,7 +84,7 @@
                 protected override void Setup(FeatureConfigurationContext context)
                 {
                     var testContext = context.Settings.Get<TimeoutTestContext>();
-                    context.Container.ConfigureComponent(b => new CyclingOutageTimeoutPersister(testContext.SecondsToWait), DependencyLifecycle.SingleInstance);
+                    context.Container.AddSingleton(_ => new CyclingOutageTimeoutPersister(testContext.SecondsToWait));
                 }
             }
         }

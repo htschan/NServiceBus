@@ -2,6 +2,7 @@ namespace NServiceBus.Features
 {
     using System;
     using System.Threading.Tasks;
+    using Microsoft.Extensions.DependencyInjection;
     using NServiceBus.DataBus;
     using Settings;
 
@@ -32,7 +33,7 @@ namespace NServiceBus.Features
         {
             if (!context.Container.HasComponent<IDataBusSerializer>())
             {
-                context.Container.ConfigureComponent<DefaultDataBusSerializer>(DependencyLifecycle.SingleInstance);
+                context.Container.AddSingleton<DefaultDataBusSerializer>();
             }
 
             context.RegisterStartupTask(b => new IDataBusInitializer(b.Build<IDataBus>()));

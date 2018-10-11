@@ -4,6 +4,7 @@ namespace NServiceBus
     using System.Threading;
     using System.Threading.Tasks;
     using Features;
+    using Microsoft.Extensions.DependencyInjection;
     using Transport;
 
     class Sending : Feature
@@ -16,11 +17,11 @@ namespace NServiceBus
         protected internal override void Setup(FeatureConfigurationContext context)
         {
             var lazySendingConfigResult = new Lazy<TransportSendInfrastructure>(() => context.Settings.Get<TransportInfrastructure>().ConfigureSendInfrastructure(), LazyThreadSafetyMode.ExecutionAndPublication);
-            context.Container.ConfigureComponent(c =>
+            context.Container.AddSingleton(c =>
             {
                 var dispatcher = lazySendingConfigResult.Value.DispatcherFactory();
                 return dispatcher;
-            }, DependencyLifecycle.SingleInstance);
+            });
 
             context.RegisterStartupTask(new PrepareForSending(lazySendingConfigResult));
         }

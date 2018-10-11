@@ -1,5 +1,7 @@
 ﻿namespace NServiceBus.Features
 {
+    using Microsoft.Extensions.DependencyInjection;
+
     /// <summary>
     /// In-memory Gateway.
     /// </summary>
@@ -15,7 +17,7 @@
         /// </summary>
         protected internal override void Setup(FeatureConfigurationContext context)
         {
-            context.Container.ConfigureComponent<InMemoryGatewayDeduplication>(DependencyLifecycle.SingleInstance);
+            context.Container.AddSingleton<InMemoryGatewayDeduplication>();
         }
     }
 }

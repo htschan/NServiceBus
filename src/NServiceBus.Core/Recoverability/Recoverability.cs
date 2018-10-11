@@ -9,6 +9,7 @@
     using Features;
     using Hosting;
     using Logging;
+    using Microsoft.Extensions.DependencyInjection;
     using Settings;
     using Support;
     using Transport;
@@ -59,7 +60,7 @@
                 UnrecoverableExceptions = recoverabilityConfig.Failed.UnrecoverableExceptionTypes.Select(t => t.FullName).ToArray()
             });
 
-            context.Container.ConfigureComponent(b =>
+            context.Container.AddSingleton(b =>
             {
                 Func<string, MoveToErrorsExecutor> moveToErrorsExecutorFactory = localAddress =>
                 {
@@ -106,7 +107,7 @@
                     immediateRetriesAvailable,
                     delayedRetriesAvailable);
 
-            }, DependencyLifecycle.SingleInstance);
+            });
 
             RaiseLegacyNotifications(context);
         }

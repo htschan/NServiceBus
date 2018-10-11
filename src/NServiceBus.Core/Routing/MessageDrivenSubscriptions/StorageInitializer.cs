@@ -2,6 +2,7 @@
 {
     using System.Threading.Tasks;
     using Features;
+    using Microsoft.Extensions.DependencyInjection;
     using Unicast.Subscriptions.MessageDrivenSubscriptions;
 
     class StorageInitializer : Feature
@@ -13,7 +14,7 @@
 
         protected internal override void Setup(FeatureConfigurationContext context)
         {
-            context.Container.ConfigureComponent<CallInit>(DependencyLifecycle.SingleInstance);
+            context.Container.AddSingleton<CallInit>();
 
             context.RegisterStartupTask(b => b.Build<CallInit>());
         }

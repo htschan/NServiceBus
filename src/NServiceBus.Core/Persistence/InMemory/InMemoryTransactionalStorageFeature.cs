@@ -1,6 +1,7 @@
 ﻿namespace NServiceBus
 {
     using Features;
+    using Microsoft.Extensions.DependencyInjection;
 
     class InMemoryTransactionalStorageFeature : Feature
     {
@@ -9,8 +10,8 @@
         /// </summary>
         protected internal override void Setup(FeatureConfigurationContext context)
         {
-            context.Container.ConfigureComponent<InMemorySynchronizedStorage>(DependencyLifecycle.SingleInstance);
-            context.Container.ConfigureComponent<InMemoryTransactionalSynchronizedStorageAdapter>(DependencyLifecycle.SingleInstance);
+            context.Container.AddSingleton<InMemorySynchronizedStorage>();
+            context.Container.AddSingleton<InMemoryTransactionalSynchronizedStorageAdapter>();
         }
     }
 }

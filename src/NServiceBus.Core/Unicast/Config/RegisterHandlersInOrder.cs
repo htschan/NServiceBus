@@ -3,6 +3,7 @@ namespace NServiceBus.Features
     using System;
     using System.Collections.Generic;
     using System.Linq;
+    using Microsoft.Extensions.DependencyInjection;
     using Unicast;
 
     class RegisterHandlersInOrder : Feature
@@ -47,11 +48,11 @@ namespace NServiceBus.Features
 
             foreach (var t in types.Where(IsMessageHandler))
             {
-                context.Container.ConfigureComponent(t, DependencyLifecycle.InstancePerUnitOfWork);
+                context.Container.AddScoped(t);
                 handlerRegistry.RegisterHandler(t);
             }
 
-            context.Container.RegisterSingleton(handlerRegistry);
+            context.Container.AddSingleton(handlerRegistry);
         }
 
         public static bool IsMessageHandler(Type type)

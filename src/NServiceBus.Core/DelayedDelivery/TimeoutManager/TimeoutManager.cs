@@ -3,6 +3,7 @@
     using System;
     using DelayedDelivery;
     using DeliveryConstraints;
+    using Microsoft.Extensions.DependencyInjection;
     using Settings;
     using Timeout.Core;
     using Transport;
@@ -43,7 +44,7 @@
 
         static void SetupTimeoutPoller(FeatureConfigurationContext context, string dispatcherAddress)
         {
-            context.Container.ConfigureComponent(b =>
+            context.Container.AddSingleton(b =>
             {
                 var waitTime = context.Settings.Get<TimeSpan>("TimeToWaitBeforeTriggeringCriticalErrorForTimeoutPersisterReceiver");
 
@@ -54,7 +55,7 @@
                     ex => criticalError.Raise("Repeated failures when fetching timeouts from storage, endpoint will be terminated.", ex));
 
                 return new ExpiredTimeoutsPoller(b.Build<IQueryTimeouts>(), b.Build<IDispatchMessages>(), dispatcherAddress, circuitBreaker, () => DateTime.UtcNow);
-            }, DependencyLifecycle.SingleInstance);
+            });
 
             context.RegisterStartupTask(b => new TimeoutPollerRunner(b.Build<ExpiredTimeoutsPoller>()));
         }

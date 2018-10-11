@@ -3,7 +3,7 @@
     using System;
     using System.Collections.Generic;
     using System.Threading.Tasks;
-    using ObjectBuilder;
+    using Microsoft.Extensions.DependencyInjection;
     using Pipeline;
     using Settings;
     using Transport;
@@ -13,7 +13,7 @@
     /// </summary>
     public partial class FeatureConfigurationContext
     {
-        internal FeatureConfigurationContext(ReadOnlySettings settings, IConfigureComponents container, PipelineSettings pipelineSettings, RoutingComponent routing, ReceiveConfiguration receiving)
+        internal FeatureConfigurationContext(ReadOnlySettings settings, IServiceCollection container, PipelineSettings pipelineSettings, RoutingComponent routing, ReceiveConfiguration receiving)
         {
             Settings = settings;
             Container = container;
@@ -32,7 +32,7 @@
         /// <summary>
         /// Access to the container to allow for registrations.
         /// </summary>
-        public IConfigureComponents Container { get; }
+        public IServiceCollection Container { get; }
 
         /// <summary>
         /// Access to the pipeline in order to customize it.

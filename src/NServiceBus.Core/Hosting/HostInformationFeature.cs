@@ -6,6 +6,7 @@
     using System.Net;
     using System.Runtime;
     using Hosting;
+    using Microsoft.Extensions.DependencyInjection;
     using Settings;
     using Support;
 
@@ -39,7 +40,7 @@
                 context.Settings.Get<string>("NServiceBus.HostInformation.DisplayName"),
                 context.Settings.Get<Dictionary<string, string>>("NServiceBus.HostInformation.Properties"));
 
-            context.Container.ConfigureComponent(() => hostInformation, DependencyLifecycle.SingleInstance);
+            context.Container.AddSingleton(hostInformation);
 
             var endpointName = context.Settings.EndpointName();
             context.Pipeline.Register("AuditHostInformation", new AuditHostInformationBehavior(hostInformation, endpointName), "Adds audit host information");
